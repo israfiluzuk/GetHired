@@ -13,7 +13,7 @@ public enum AnimationType
     BoredSitting,
     FemaleMeetingSitting,
     MaleMeetingSitting,
-    ConfidentSit1,
+    FemaleSitting1,
     ConfidentSit2,
     BossSit1,
     BossSit2,
@@ -21,7 +21,13 @@ public enum AnimationType
     CandidateSit2,
     Speaking1,
     Speaking2,
-    Pointing
+    Pointing,
+    Writing,
+    Typing,
+    SitToStand,
+    Slapping,
+    Standing,
+    Stumbling,
 }
 
 public class AnimationReferencer : LocalSingleton<AnimationReferencer>
