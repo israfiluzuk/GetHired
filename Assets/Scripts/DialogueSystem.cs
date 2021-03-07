@@ -12,13 +12,17 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
         ScenarioIndex = index; 
     }
 
+
     IEnumerator Start()
     {
         yield return new WaitForSeconds(.1f);
         switch (ScenarioIndex)
         {
             case 0:
-                yield return IntroductionProccess();
+                yield return FifthInverviewQuestionAnswer();
+                break;
+            case 1:
+                yield return KillerScenerio();
                 break;
             default:
                 yield return null;
@@ -27,12 +31,44 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
 
 
     }
+    //-------------------------------------
 
+
+    IEnumerator KillerScenerio()
+    {
+        yield return new WaitForSeconds(10);
+        yield return DialogueManager.Instance.ShowQuestion("What are you going to do?", 0, "Hire", "Kick out!");
+        yield return DialogueManager.Instance.WaitForInteract();
+        yield return new WaitForSeconds(0.3f);
+        yield return DialogueManager.Instance.HideCurrentDialogue();
+        //GameManager.Instance.BossPositionBack();
+        if (DialogueManager.Instance.GetChoiceIndex() == 0)
+        {
+            yield return new WaitForSeconds(0.3f);
+            StartCoroutine(GameManager.Instance.HappyMan());
+            StartCoroutine(GameManager.Instance.TextAppear(GameManager.Instance.hiredTextPng, Vector3.one));
+            GameManager.Instance.coolEmoji.Play();
+            GameManager.Instance.ThumbsUp();
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(GameManager.Instance.TextAppear(GameManager.Instance.failTextPng, Vector3.one));
+            GameManager.Instance.angryEmoji.Play();
+            yield return new WaitForSeconds(1.5f);
+            GameManager.Instance.CandidateNervous();
+            StartCoroutine(GameManager.Instance.Jumping());
+        }
+    }
+
+
+
+    //-------------------------------------
     //first question - tell me about yourself
     IEnumerator IntroductionProccess()
     {
         yield return new WaitForSeconds(1.58f);
-        yield return DialogueManager.Instance.ShowQuestion("BOSS: Welcome. Can you tell me about yourself?", 0, "Start", "Hmmm...");
+        yield return DialogueManager.Instance.ShowQuestion("BOSS: Tell me about yourself?", 0, "Start", "Hmmm...");
         yield return DialogueManager.Instance.WaitForInteract();
         yield return new WaitForSeconds(0.3f);
         yield return DialogueManager.Instance.HideCurrentDialogue();
@@ -52,7 +88,7 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
     IEnumerator ProblemQuestion()
     {
         yield return new WaitForSeconds(1.58f);
-        yield return DialogueManager.Instance.ShowQuestion("BOSS: Are you OK? Take your time. It's fine.", 0, "I just need to calm...", "Hide your concern and Start speaking");
+        yield return DialogueManager.Instance.ShowQuestion("BOSS: Are you OK? Take your time. It's fine.", 0, "I just need to calm...", "Hide your concern and speak");
         yield return DialogueManager.Instance.WaitForInteract();
         yield return new WaitForSeconds(0.3f);
         yield return DialogueManager.Instance.HideCurrentDialogue();
@@ -141,7 +177,7 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
     {
         yield return new WaitForSeconds(1.5f);
         GameManager.Instance.CandidateSeatedIdle();
-        yield return DialogueManager.Instance.ShowQuestion("BOSS: Where do you see yourself in five years?", 0, "In your position", "I want to improve my skills in this area.");
+        yield return DialogueManager.Instance.ShowQuestion("BOSS: Where do you see yourself in five years?", 0, "In your position", "I want to improve my skills...");
         yield return DialogueManager.Instance.WaitForInteract();
         yield return new WaitForSeconds(0.3f);
         yield return DialogueManager.Instance.HideCurrentDialogue();
@@ -168,7 +204,7 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
     {
         yield return new WaitForSeconds(1.5f);
         GameManager.Instance.CandidateSeatedIdle();
-        yield return DialogueManager.Instance.ShowQuestion("What are you going to do?", 0, "Go on.", "Slap!");
+        yield return DialogueManager.Instance.ShowQuestion("Arrogant! What are you going to do with her?", 0, "Go on.", "Slap!");
         yield return DialogueManager.Instance.WaitForInteract();
         yield return new WaitForSeconds(0.3f);
         yield return DialogueManager.Instance.HideCurrentDialogue();
@@ -192,6 +228,8 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
             yield return new WaitForSeconds(1.2f);
             GameManager.Instance.CameraShake();
             GameManager.Instance.CandidateStumble();
+            yield return new WaitForSeconds(1);
+            GameManager.Instance.TellOff();
         }
     }
 
@@ -266,8 +304,9 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
         if (DialogueManager.Instance.GetChoiceIndex() == 0)
         {
             yield return new WaitForSeconds(1f);
-            GameManager.Instance.Pointing();
-
+            GameManager.Instance.CandidateSpeakingProcess();
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(FifthInverviewQuestionAnswer());
         }
         else
         {
@@ -290,13 +329,46 @@ public class DialogueSystem : LocalSingleton<DialogueSystem>
         if (DialogueManager.Instance.GetChoiceIndex() == 0)
         {
             yield return new WaitForSeconds(1f);
-            GameManager.Instance.Pointing();
-
+            GameManager.Instance.CandidateSpeakingProcess();
+            GameManager.Instance.ThumbsUp();
+            yield return new WaitForSeconds(2f);
+            //StartCoroutine(BossDecideWomanHiring());
+            StartCoroutine(GameManager.Instance.TextAppear(GameManager.Instance.hiredTextPng, Vector3.one));
+            GameManager.Instance.WomanSittingHappy();
+            GameManager.Instance.coolEmoji.Play();
         }
         else
         {
             yield return new WaitForSeconds(1f);
             GameManager.Instance.CandidateSpeakingProcess();
+            yield return new WaitForSeconds(2f);
+            StartCoroutine(BossDecideWomanHiring());
+            StartCoroutine(GameManager.Instance.TextAppear(GameManager.Instance.failTextPng, Vector3.one));
+            GameManager.Instance.sadEmoji.Play();
+        }
+    }//seventh question - Sixth question Answer
+    IEnumerator BossDecideWomanHiring()
+    {
+        yield return new WaitForSeconds(1.5f);
+        GameManager.Instance.CandidateSeatedIdle();
+        yield return DialogueManager.Instance.ShowQuestion("Do you want to hire her?", 0, "YES", "NO");
+        yield return DialogueManager.Instance.WaitForInteract();
+        yield return new WaitForSeconds(0.3f);
+        yield return DialogueManager.Instance.HideCurrentDialogue();
+        if (DialogueManager.Instance.GetChoiceIndex() == 0)
+        {
+            yield return new WaitForSeconds(1f);
+            GameManager.Instance.WomanSittingHappy();
+            GameManager.Instance.ThumbsUp();
+            StartCoroutine(GameManager.Instance.TextAppear(GameManager.Instance.hiredTextPng, Vector3.one));
+            GameManager.Instance.coolEmoji.Play();
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            GameManager.Instance.SadCandidate();
+            StartCoroutine(GameManager.Instance.TextAppear(GameManager.Instance.failTextPng, Vector3.one));
+            GameManager.Instance.sadEmoji.Play();
 
         }
     }

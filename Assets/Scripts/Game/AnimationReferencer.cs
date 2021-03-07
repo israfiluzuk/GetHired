@@ -28,6 +28,14 @@ public enum AnimationType
     Slapping,
     Standing,
     Stumbling,
+    TellOff,
+    JumpingUp,
+    JumpingDown,
+    Kicking,
+    HeadAttacked,
+    MaleHappy,
+    SittingHappy,
+    ThumbsUp,
 }
 
 public class AnimationReferencer : LocalSingleton<AnimationReferencer>
